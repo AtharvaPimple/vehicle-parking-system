@@ -44,8 +44,15 @@ The `User-Service` module is a core component of the Parking Management System (
 The `User-Service` module is built using the **Spring Boot** framework and adheres to a **layered architecture**. It communicates with other services via **REST APIs** and utilizes **H2** as its database for local development purposes.
 
 ### 2.2 Layered Architecture
-
-*(A layered architecture typically involves components like Presentation/Controller, Service/Business Logic, and Data Access/Repository layers, facilitating separation of concerns and maintainability.)*
+```mermaid
+graph TD
+    A[API Gateway] --> B[User Controller]
+    B --> C[User Service]
+    C --> D[User Repository]
+    D --> E[User Database]
+    A -- Registers and Discovers --> F[Eureka Discovery Service]
+    C -- Registers and Discovers --> F
+```
 
 ### 2.3 Technologies Used
 
