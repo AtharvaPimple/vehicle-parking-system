@@ -44,6 +44,7 @@ The `User-Service` module is a core component of the Parking Management System (
 The `User-Service` module is built using the **Spring Boot** framework and adheres to a **layered architecture**. It communicates with other services via **REST APIs** and utilizes **H2** as its database for local development purposes.
 
 ### 2.2 Layered Architecture
+
 ```mermaid
 graph TD
     A[API Gateway] --> B[User Controller]
