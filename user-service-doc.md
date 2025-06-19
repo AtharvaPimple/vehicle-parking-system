@@ -86,11 +86,31 @@ The `User-Service` module utilizes the following table:
 
 ### 4.1 User Management
 
-* **POST `/api/users/create`**: Create a new user
-* **GET `/api/users/{id}`**: Retrieve user details by ID
-* **GET `/api/users`**: Retrieve all users
+| Endpoint                  | Method | Description                      | Request Body/Params           |
+| :------------------------ | :----- | :------------------------------- | :---------------------------- |
+| `/api/users/`             | `POST` | Register a new user              | `User` object                 |
+| `/api/users/{Id}`      | `GET`  | Retrieve user by Id           | `Id` (Path Variable)       |
+| `/api/users`              | `GET`  | Retrieve all users               | None                          |
 
-### 4.2 Swagger Documentation
+### 4.2 Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant API Gateway
+    participant UserService
+    participant UserDB
+ 
+    User->>API Gateway: POST /api/users/ (User object)
+    API Gateway->>UserService: Route request
+    UserService->>UserService: Validate user data
+    UserService->>UserDB: Save user details
+    UserDB-->>UserService: User details saved
+    UserService-->>API Gateway: Response with registered user details
+    API Gateway-->>User: Response with registered user details
+```
+
+### 4.3 Swagger Documentation
 
 Detailed API documentation can be found via Swagger UI, typically available at `/swagger-ui.html` when the service is running.
 
