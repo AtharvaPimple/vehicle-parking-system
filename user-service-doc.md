@@ -1,49 +1,61 @@
-# User-Service Module Low-Level Documentation
+# User-Service Module: Low-Level Design Document
 
-This document provides a low-level overview of the `User-Service` module, a microservice within the Parking Management System (PMS) responsible for managing user-related operations.
+This document provides a detailed low-level overview of the `User-Service` module, a crucial microservice within the Parking Management System (PMS) responsible for all user-related operations.
 
 ---
 
-## 1. Project Overview
+## Table of Contents
+1. [Introduction](#1-introduction)  
+    * [1.1 Features](#11-features)  
+2. [Architecture](#2-architecture)  
+    * [2.1 High-Level Architecture](#21-high-level-architecture)  
+    * [2.2 Technologies Used](#22-technologies-used)  
+3. [Database Design](#3-database-design)  
+    * [3.1 User Table](#31-user-table)  
+4. [API Endpoints](#4-api-endpoints)  
+    * [4.1 User Management Endpoints](#41-user-management-endpoints)  
+    * [4.2 User Registration Sequence Diagram](#42-user-registration-sequence-diagram)  
+    * [4.3 Swagger Documentation](#43-swagger-documentation)  
+5. [Error Handling](#5-error-handling)  
+    * [5.1 Common Error Codes](#51-common-error-codes)  
+6. [Dependencies](#6-dependencies)  
+    * [6.1 Key Dependencies](#61-key-dependencies)  
+7. [Deployment](#7-deployment)  
+    * [7.1 Key Configuration](#71-key-configuration)  
 
-The `User-Service` module is a core component of the Parking Management System (PMS), dedicated to managing user-specific functionalities. It handles operations such as user creation, retrieval, and role management, interacting with a database to persist and retrieve user information.
+---
 
-### Features
+## 1. Introduction
 
-* **Create new users**
-    * Allows users to register by providing essential details such as name, email, phone number, and password.
-    * Validates user input to ensure data integrity and prevent duplicate entries.
-    * Hashes passwords securely using algorithms before storing them in the database.
+The **`User-Service`** is a core component of the Vehicle Parking Management System, dedicated to managing user-specific functionalities. It handles operations such as user creation, retrieval, and role management, interacting with a database to persist and retrieve user information.
 
-* **Retrieve user details by ID**
-    * Enables fetching specific user information using their unique ID.
-    * Ensures efficient querying of the database for quick responses.
-    * Returns detailed user information, including name, email, phone number, and role.
+### 1.1 Features
 
-* **Retrieve all users**
-    * Provides functionality to fetch all registered users in the system.
-    * Supports pagination and filtering to handle large datasets efficiently.
-    * Returns a list of users with their basic details.
+- **User Registration**  
+    - Allows new users to register with essential details.  
+    - Validates input and prevents duplicates.  
+    - Securely hashes passwords.
 
-* **Role management for users**
-    * Assigns roles (e.g., Admin, User) to users during registration or via admin actions.
-    * Restricts access to certain endpoints based on user roles.
-    * Allows administrators to update or modify user roles as needed.
+- **User Retrieval**  
+    - **By ID:** Fetch specific user by ID.  
+    - **All Users:** List all users with pagination/filtering.
 
-* **User profile management**
-    * Allows users to view their profile information, including name, email, phone number, and role.
-    * Provides functionality for users to update their profile details, such as changing their name or phone number.
-    * Enters that only authorized users can modify their own profiles.
+- **Role Management**  
+    - Assigns roles (e.g., Admin, User).  
+    - Enforces role-based access.  
+    - Supports role updates.
+
+- **User Profile Management**  
+    - View/update personal user profiles.  
+    - Authorized users only.
 
 ---
 
 ## 2. Architecture
 
+The `User-Service` is built using **Spring Boot** with a **layered architecture** and communicates via REST APIs. Uses **H2** for in-memory DB during local development.
+
 ### 2.1 High-Level Architecture
-
-The `User-Service` module is built using the **Spring Boot** framework and adheres to a **layered architecture**. It communicates with other services via **REST APIs** and utilizes **H2** as its database for local development purposes.
-
-### 2.2 Layered Architecture
 
 ```mermaid
 graph TD
@@ -55,44 +67,40 @@ graph TD
     C -- Registers and Discovers --> F
 ```
 
-### 2.3 Technologies Used
+### 2.2 Technologies Used
 
-* **Framework:** Spring Boot
-* **Database:** H2 (local development)
-* **Language:** Java
-* **Build Tool:** Maven
+- **Framework:** Spring Boot  
+- **Database:** H2 (local dev)  
+- **Language:** Java  
+- **Build Tool:** Maven  
 
 ---
 
 ## 3. Database Design
 
-### 3.1 Database Tables
+### 3.1 User Table
 
-The `User-Service` module utilizes the following table:
-
-#### User Table
-
-| Column Name | Data Type | Description |
-| :---------- | :-------- | :----------------------------- |
-| `id` | `Long` | Primary key (auto-generated) |
-| `name` | `String` | Name of the user |
-| `email` | `String` | Email address of the user |
-| `phone` | `String` | Phone number of the user |
-| `role` | `String` | Role of the user (e.g., Admin) |
+| Column Name | Data Type | Description                    |
+|-------------|-----------|--------------------------------|
+| id          | Long      | Primary key (auto-generated)   |
+| name        | String    | Name of the user               |
+| email       | String    | Email address of the user      |
+| phone       | String    | Phone number of the user       |
+| role        | String    | Role of the user (e.g., Admin) |
 
 ---
 
 ## 4. API Endpoints
 
-### 4.1 User Management
+### 4.1 User Management Endpoints
 
-| Endpoint                  | Method | Description                      | Request Body/Params           |
-| :------------------------ | :----- | :------------------------------- | :---------------------------- |
-| `/api/users/`             | `POST` | Register a new user              | `User` object                 |
-| `/api/users/{Id}`      | `GET`  | Retrieve user by Id           | `Id` (Path Variable)       |
-| `/api/users`              | `GET`  | Retrieve all users               | None                          |
+| Endpoint           | Method | Description             | Request Body/Params |
+|--------------------|--------|-------------------------|---------------------|
+| /api/users/        | POST   | Register a new user     | User object         |
+| /api/users/{id}    | GET    | Retrieve user by ID     | Path Variable       |
+| /api/users         | GET    | Retrieve all users      | None                |
 
-### 4.2 Sequence Diagram
+### 4.2 User Registration Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -100,53 +108,68 @@ sequenceDiagram
     participant API Gateway
     participant UserService
     participant UserDB
- 
+
     User->>API Gateway: POST /api/users/ (User object)
     API Gateway->>UserService: Route request
     UserService->>UserService: Validate user data
     UserService->>UserDB: Save user details
     UserDB-->>UserService: User details saved
-    UserService-->>API Gateway: Response with registered user details
-    API Gateway-->>User: Response with registered user details
+    UserService-->>API Gateway: Registered user response
+    API Gateway-->>User: Return response
 ```
 
 ### 4.3 Swagger Documentation
 
-Detailed API documentation can be found via Swagger UI, typically available at `/swagger-ui.html` when the service is running.
+### 4.3 Swagger Documentation
+
+Comprehensive API documentation is available via Swagger UI, typically accessible at:  
+**`http://localhost:8080/swagger-ui.html`**
+
+**Available Endpoints:**
+
+| HTTP Method | Endpoint | Description |
+|-------------|----------|-------------|
+| GET         | `/swagger-ui.html#/UserController/getAllUsers` | Retrieve all users |
+| POST        | `/swagger-ui.html#/UserController/createUser`  | Add a new user |
+| GET         | `/swagger-ui.html#/UserController/getUserById` | Retrieve a user by ID |
+| DELETE      | `/swagger-ui.html#/UserController/deleteUserById` | Delete a user by ID |
+
 
 ---
 
 ## 5. Error Handling
 
-The module leverages Spring Boot's exception handling mechanisms to return appropriate HTTP status codes for errors, ensuring clear communication of issues to client applications.
+Spring Boot’s global exception handling returns appropriate HTTP codes for clear client communication.
 
-### Common Error Codes
+### 5.1 Common Error Codes
 
-| Error Code | Description |
-| :--------- | :-------------------- |
-| `400` | Bad Request |
-| `404` | Resource Not Found |
-| `500` | Internal Server Error |
+| Error Code | Description                             |
+|------------|-----------------------------------------|
+| 400        | Bad Request (e.g., invalid input)        |
+| 404        | Not Found (e.g., user doesn't exist)     |
+| 500        | Internal Server Error                    |
 
 ---
 
 ## 6. Dependencies
 
-### Key Dependencies
+### 6.1 Key Dependencies
 
-* **Spring Boot Starter Web**: For building REST APIs
-* **Spring Boot Starter Data JPA**: For database interactions
-* **H2 Database**: In-memory database for local development
-* **Lombok**: For reducing boilerplate code
-* **JUnit & Mockito**: For unit testing
+- `spring-boot-starter-web`  
+- `spring-boot-starter-data-jpa`  
+- `h2-database`  
+- `lombok`  
+- `junit`, `mockito`
 
 ---
 
 ## 7. Deployment
 
-The `User-Service` module is configured to run on **port `8010`**. It uses **Maven** for building and packaging the application. Database configurations are defined within the `application.properties` file.
+Service can be built and deployed using Maven.
 
-### Key Configuration
+### 7.1 Key Configuration
+
+Defined in `application.properties`:
 
 ```properties
 spring.application.name=user-service
@@ -156,3 +179,4 @@ spring.datasource.driver-class-name=org.h2.Driver
 spring.datasource.username=sa
 spring.datasource.password=
 spring.jpa.hibernate.ddl-auto=update
+```
