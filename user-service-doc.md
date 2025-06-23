@@ -123,7 +123,7 @@ sequenceDiagram
 ### 4.3 Swagger Documentation
 
 Comprehensive API documentation is available via Swagger UI, typically accessible at:  
-**`http://localhost:8080/swagger-ui.html`**
+[**http://localhost:8080/swagger-ui.html**](http://localhost:8080/swagger-ui.html)
 
 **Available Endpoints:**
 
