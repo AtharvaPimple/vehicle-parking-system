@@ -8,14 +8,13 @@ This document provides a detailed low-level overview of the `User-Service` modul
 1. [Introduction](#1-introduction)  
     * [1.1 Features](#11-features)  
 2. [Architecture](#2-architecture)  
-    * [2.1 Component Diagram](#21-component-diagram)  
-    * [2.2 Technologies Used](#22-technologies-used)  
+    * [2.1 Component Diagram](#21-component-diagram)
+    * [2.2 User Registration Sequence Diagram](#22-user-registration-sequence-diagram) 
 3. [Database Design](#3-database-design)  
     * [3.1 User Table](#31-user-table)  
 4. [API Endpoints](#4-api-endpoints)  
     * [4.1 User Management Endpoints](#41-user-management-endpoints)  
-    * [4.2 User Registration Sequence Diagram](#42-user-registration-sequence-diagram)  
-    * [4.3 Swagger Documentation](#43-swagger-documentation)  
+    * [4.2 Swagger Documentation](#42-swagger-documentation)  
 5. [Error Handling](#5-error-handling)  
     * [5.1 Common Error Codes](#51-common-error-codes)  
 6. [Dependencies](#6-dependencies)  
@@ -104,13 +103,25 @@ flowchart LR
   class D1,D2 model
 
 ```
+### 2.2 User Registration Sequence Diagram
 
-### 2.2 Technologies Used
+```mermaid
+sequenceDiagram
+    participant User
+    participant API Gateway
+    participant UserService
+    participant UserDB
 
-- **Framework:** Spring Boot  
-- **Database:** H2 (local dev)  
-- **Language:** Java  
-- **Build Tool:** Maven  
+    User->>API Gateway: POST /api/users/ (User object)
+    API Gateway->>UserService: Route request
+    UserService->>UserService: Validate user data
+    UserService->>UserDB: Save user details
+    UserDB-->>UserService: User details saved
+    UserService-->>API Gateway: Registered user response
+    API Gateway-->>User: Return response
+```
+
+ 
 
 ---
 
@@ -138,27 +149,9 @@ flowchart LR
 | /api/users/{id}    | GET    | Retrieve user by ID     | Path Variable       |
 | /api/users         | GET    | Retrieve all users      | None                |
 
-### 4.2 User Registration Sequence Diagram
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant API Gateway
-    participant UserService
-    participant UserDB
 
-    User->>API Gateway: POST /api/users/ (User object)
-    API Gateway->>UserService: Route request
-    UserService->>UserService: Validate user data
-    UserService->>UserDB: Save user details
-    UserDB-->>UserService: User details saved
-    UserService-->>API Gateway: Registered user response
-    API Gateway-->>User: Return response
-```
-
-### 4.3 Swagger Documentation
-
-### 4.3 Swagger Documentation
+### 4.2 Swagger Documentation
 
 Comprehensive API documentation is available via Swagger UI, typically accessible at:  
 [**http://localhost:8080/swagger-ui.html**](http://localhost:8080/swagger-ui.html)
